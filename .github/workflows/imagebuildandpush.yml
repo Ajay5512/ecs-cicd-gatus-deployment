@@ -35,8 +35,8 @@ jobs:
         run: |
           docker run -d --rm -p 8080:8080 --name gatus-test gatus
           sleep 10
-          curl --fail http://localhost:8080 || (echo "Gatus is not responding" && exit 1)
-          echo "Gatus is responding!"
+          curl --fail http://localhost:8080 > /dev/null || (echo "Gatus is not responding" && exit 1)
+          echo "gatus is responding!"
           docker stop gatus-test
 
       - name: Tag Docker Image (Needs to be tagged with ECR URI for push)
