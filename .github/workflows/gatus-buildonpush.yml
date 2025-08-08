@@ -13,10 +13,6 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v2
 
-      - name: Debug region secret (TEMP)
-        run: |
-          echo "Region: ${{ secrets.AWS_REGION }}"
-
       - name: Configure AWS creds
         uses: aws-actions/configure-aws-credentials@v3
         with: 
@@ -39,3 +35,8 @@ jobs:
       - name: Push Docker Image onto ECR
         run: |
           docker push ${{ secrets.ECR_REPOSITORY }}:latest 
+        
+      - name: Initialize the terraform state file
+        working-directory: ./terraform
+        run: |
+          terraform init
