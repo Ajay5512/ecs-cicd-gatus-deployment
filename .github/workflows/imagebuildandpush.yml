@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - master
+    paths: 
+      - 'GatusApp/**'
+      - '.github/workflows/**'
 
 jobs: 
   build-and-push-ECR:
@@ -35,11 +38,3 @@ jobs:
       - name: Push Docker Image onto ECR
         run: |
           docker push ${{ secrets.ECR_REPOSITORY }}:latest 
-
-      - name: Installing terraform
-        uses: hashicorp/setup-terraform@v2
-        
-      - name: Initialize the terraform state file
-        working-directory: ./terraform
-        run: |
-          terraform init

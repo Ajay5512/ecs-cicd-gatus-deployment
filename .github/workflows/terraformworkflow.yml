@@ -1,0 +1,39 @@
+name: Apply Terraform Changes
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - terraform/**
+      - '.github/workflows/**'
+
+jobs:
+  applying-terraform-changes:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Installing terraform
+        uses: hashicorp/setup-terraform@v2
+
+      - name: Configure AWS creds
+        uses: aws-actions/configure-aws-credentials@v3
+        with: 
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+        
+      - name: Initialize the terraform state file
+        working-directory: ./terraform
+        run: |
+          terraform init
+
+      - name: Run the terraform plan then apply
+        working-directory: ./terraform
+        run: |
+          terraform plan
+          terraform apply -auto-approve    
