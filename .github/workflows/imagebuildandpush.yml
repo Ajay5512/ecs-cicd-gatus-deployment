@@ -33,7 +33,7 @@ jobs:
 
       - name: Testing the gatus container
         run: |
-          docker run -d --rm -p 8080:8080 --name gatus-test gatus:latest
+          docker run -d --rm -p 8080:8080 --name gatus-test gatus
           sleep 10
           curl --fail http://localhost:8080 || (echo "Gatus is not responding" && exit 1)
           echo "Gatus is responding!"
