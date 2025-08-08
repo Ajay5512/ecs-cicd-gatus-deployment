@@ -1,0 +1,11 @@
+
+services:
+  gatus:
+    image: twinproduction/gatus:latest
+    container_name: gatus
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./config/config.yaml:/config/config.yaml
+    environment:
+      - GATUS_CONFIG_PATH=/config/config.yaml
