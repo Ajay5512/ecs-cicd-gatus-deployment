@@ -1,4 +1,4 @@
-name: Build and Push Gatus Image
+name: Build, Test and Push Gatus Image
 
 on:
   push:
@@ -30,6 +30,14 @@ jobs:
       - name: Build the Docker Image
         run: |
           docker build -t gatus ./GatusApp
+
+      - name: Testing the gatus container
+        run: |
+          docker run -d --rm -p 8080:8080 --name gatus-test gatus:latest
+          sleep 10
+          curl --fail http://localhost:8080 || (echo "Gatus is not responding" && exit 1)
+          echo "Gatus is responding!"
+          docker stop gatus-test
 
       - name: Tag Docker Image (Needs to be tagged with ECR URI for push)
         run: |
