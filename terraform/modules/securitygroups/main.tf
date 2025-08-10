@@ -1,7 +1,7 @@
 resource "aws_security_group" "alb" {
   name        = "alb-sg"
   description = "Allow http/https traffic in"
-  vpc_id      = aws_vpc.network.id
+  vpc_id      = var.vpc_id
 }
 
 resource "aws_security_group_rule" "allow_https_in_alb" {
@@ -27,8 +27,8 @@ resource "aws_security_group_rule" "allow_http_in_alb" {
 resource "aws_security_group_rule" "alb_out_to_ecs" {
   type                     = "egress"
   security_group_id        = aws_security_group.alb.id
-  from_port                = 8080
-  to_port                  = 8080
+  from_port                = var.app_port
+  to_port                  = var.app_port
   protocol                 = "tcp"
   source_security_group_id = aws_security_group.ecs.id
   description              = "ALB to ECS on app port"
@@ -37,7 +37,7 @@ resource "aws_security_group_rule" "alb_out_to_ecs" {
 
 resource "aws_security_group" "ecs" {
   name        = "ecs-sg"
-  vpc_id      = aws_vpc.network.id
+  vpc_id      = var.vpc_id
   description = "Allow from ALB into ECS"
 }
 
@@ -46,8 +46,8 @@ resource "aws_security_group_rule" "allow_alb_sg_in_ecs" {
   type = "ingress"
   security_group_id = aws_security_group.ecs.id
   source_security_group_id = aws_security_group.alb.id
-  from_port                = 8080
-  to_port                  = 8080
+  from_port                = var.app_port
+  to_port                  = var.app_port
   protocol                 = "tcp"
   description              = "Allow app traffic from ALB SG"
 }

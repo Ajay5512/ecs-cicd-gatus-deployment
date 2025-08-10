@@ -2,8 +2,8 @@ resource "aws_lb" "gatus_alb" {
   name               = "ecsalb"
   load_balancer_type = "application"
   internal           = false
-  subnets            = [aws_subnet.public_1.id, aws_subnet.public_2.id]
-  security_groups    = [aws_security_group.alb.id]
+  subnets            = var.public_subnet_ids
+  security_groups    = [var.alb_sg_id]
   enable_deletion_protection = false
   idle_timeout               = 60
 }
@@ -13,7 +13,7 @@ resource "aws_lb_target_group" "target_app" {
   port        = 8080
   protocol    = "HTTP"
   target_type = "ip"
-  vpc_id      = aws_vpc.network.id
+  vpc_id      = var.vpc_id
 
   health_check {
     protocol            = "HTTP"
@@ -49,7 +49,7 @@ resource "aws_lb_listener" "https" {
   port = 443
   protocol = "HTTPS"
   ssl_policy = "ELBSecurityPolicy-TLS13-1-2-2021-06" # this is aws managed
-  certificate_arn = aws_acm_certificate.acm.arn
+  certificate_arn = var.certificate_arn
 
   default_action {
     type = "forward"

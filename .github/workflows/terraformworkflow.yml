@@ -1,4 +1,4 @@
-name: Apply Terraform Changes
+name: plan terraform changes
 
 on:
   push:
@@ -30,10 +30,32 @@ jobs:
       - name: Initialize the terraform state file
         working-directory: ./terraform
         run: |
-          terraform init
+          terraform fmt -check -recursive
+          terraform init 
+          terraform validate
 
-      - name: Run the terraform plan then apply
+      - name: Run the terraform plan
         working-directory: ./terraform
         run: |
           terraform plan
-          terraform apply -auto-approve    
+
+
+      - name: Plan
+        run: |
+          terraform plan -no-color
+          terraform show -no-color plan.out > plan.txt
+
+
+      - name: Show plan in job summary
+        run: |
+          {
+            echo '## Terraform Plan'
+            echo ''
+            echo '```'
+            sed -n '1,400p' plan.txt
+            echo '```'
+            echo ''
+            echo '_Full plan attached as an artifact (tf-plan)._'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          
