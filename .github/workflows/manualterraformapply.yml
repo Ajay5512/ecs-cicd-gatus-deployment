@@ -33,7 +33,7 @@ jobs:
       - name: Download plan artifact from latest Plan run
         uses: dawidd6/action-download-artifact@v3
         with:
-          workflow: plan terraform changes
+          workflow: terraformworkflow.yml
           workflow_conclusion: success
           branch: master
           name: tf-plan         
