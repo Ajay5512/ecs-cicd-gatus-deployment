@@ -5,23 +5,23 @@ resource "aws_security_group" "alb" {
 }
 
 resource "aws_security_group_rule" "allow_https_in_alb" {
-  type = "ingress"
+  type              = "ingress"
   security_group_id = aws_security_group.alb.id
-  cidr_blocks = ["0.0.0.0/0"]
-  from_port = 443
-  to_port = 443
-  protocol = "tcp"
-  description = "HTTPS from internet"
+  cidr_blocks       = ["0.0.0.0/0"]
+  from_port         = 443
+  to_port           = 443
+  protocol          = "tcp"
+  description       = "HTTPS from internet"
 }
 
 resource "aws_security_group_rule" "allow_http_in_alb" {
-  type = "ingress"
+  type              = "ingress"
   security_group_id = aws_security_group.alb.id
-  cidr_blocks = ["0.0.0.0/0"]
-  from_port = 80
-  to_port = 80
-  protocol = "tcp"
-  description = "HTTP from internet"
+  cidr_blocks       = ["0.0.0.0/0"]
+  from_port         = 80
+  to_port           = 80
+  protocol          = "tcp"
+  description       = "HTTP from internet"
 }
 
 resource "aws_security_group_rule" "alb_out_to_ecs" {
@@ -43,8 +43,8 @@ resource "aws_security_group" "ecs" {
 
 
 resource "aws_security_group_rule" "allow_alb_sg_in_ecs" {
-  type = "ingress"
-  security_group_id = aws_security_group.ecs.id
+  type                     = "ingress"
+  security_group_id        = aws_security_group.ecs.id
   source_security_group_id = aws_security_group.alb.id
   from_port                = var.app_port
   to_port                  = var.app_port

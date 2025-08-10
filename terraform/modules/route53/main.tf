@@ -1,6 +1,6 @@
 resource "aws_route53_record" "alb_alias" {
-  zone_id = "Z03197441FOIGRDDOF569"                   
-  name    = "zakariagatus.click"             
+  zone_id = "Z03197441FOIGRDDOF569"
+  name    = "zakariagatus.click"
   type    = "A"
 
   alias {

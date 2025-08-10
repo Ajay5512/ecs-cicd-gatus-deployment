@@ -1,10 +1,10 @@
 resource "aws_acm_certificate" "acm" {
-    domain_name = "zakariagatus.click"
-    validation_method = "DNS"
+  domain_name       = "zakariagatus.click"
+  validation_method = "DNS"
 
-    lifecycle {
-      create_before_destroy = true
-    }
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_route53_record" "acm_cert_validation" {

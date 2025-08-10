@@ -1,21 +1,21 @@
 terraform {
   backend "s3" {
-    bucket = "zakaria-projects"
-    key = "ecs/terraformstate.tfstate"
-    region = "eu-west-2"
-    encrypt = true
+    bucket         = "zakaria-projects"
+    key            = "ecs/terraformstate.tfstate"
+    region         = "eu-west-2"
+    encrypt        = true
     dynamodb_table = "ecsstatefile-lock"
   }
-    required_providers {
-      aws = {
-        source = "hashicorp/aws"
-        version = "5.62.0"
-      }
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "5.62.0"
     }
+  }
 }
 
 provider "aws" {
-    # Credentials will be added through git workflows via secrets
+  # Credentials will be added through git workflows via secrets
 }
 
 module "vpc" {
@@ -23,8 +23,8 @@ module "vpc" {
 }
 
 module "security_groups" {
-  source  = "./modules/securitygroups"
-  vpc_id  = module.vpc.vpc_id
+  source = "./modules/securitygroups"
+  vpc_id = module.vpc.vpc_id
 }
 
 module "acm" {
