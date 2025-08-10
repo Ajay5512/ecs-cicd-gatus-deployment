@@ -1,4 +1,4 @@
 ./tfLocalStack
 **/.terraform/*
-*.tfstate   # using s3 backend anyways :)
+*.tfstate   # using s3 backend anyways
 *.tfstate.* # using s3 backend anyways
