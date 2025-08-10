@@ -37,8 +37,16 @@ jobs:
       - name: Plan
         working-directory: ./terraform
         run: |
-          terraform plan -out -no-color plan.out
+          terraform plan -no-color -out plan.out
           terraform show -no-color plan.out > plan.txt
+
+      - name: UPLOAD THE PLAN BRUH
+        uses: actions/upload-artifact@v4
+        with:
+          name: tf-plan
+          path: |
+            terraform/plan.out
+            terraform/plan.txt
 
 
       - name: Show plan in job summary
