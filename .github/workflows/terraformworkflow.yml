@@ -35,12 +35,14 @@ jobs:
           terraform validate
 
       - name: Plan
+        working-directory: ./terraform
         run: |
           terraform plan -no-color
           terraform show -no-color plan.out > plan.txt
 
 
       - name: Show plan in job summary
+        working-directory: ./terraform
         run: |
           {
             echo '## Terraform Plan'
