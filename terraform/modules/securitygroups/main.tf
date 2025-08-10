@@ -52,6 +52,16 @@ resource "aws_security_group_rule" "allow_alb_sg_in_ecs" {
   description              = "Allow app traffic from ALB SG"
 }
 
+resource "aws_security_group_rule" "allow_all_local" {
+  type              = "ingress"
+  security_group_id = aws_security_group.ecs.id
+  cidr_blocks       = ["10.0.0.0/24"]
+  from_port         = 0
+  to_port           = 0
+  protocol          = -1
+  description       = "All local in"
+}
+
 resource "aws_security_group_rule" "allow_all_out_ecs" {
   type              = "egress"
   security_group_id = aws_security_group.ecs.id
