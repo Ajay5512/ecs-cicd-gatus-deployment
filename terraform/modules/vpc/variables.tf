@@ -39,17 +39,6 @@ variable "publicnacl_config" {
       to_port     = 0
     },
 
-    # This is a debugging step. Inbound traffic from internet is necessary for traffic coming back through NAT gateway.
-    {
-      rule_number = 40
-      egress      = false
-      protocol    = "tcp"
-      action      = "allow"
-      cidr_block  = "0.0.0.0/0"
-      from_port   = 1024
-      to_port     = 65535
-    },
-
     #outbound traffic directed to private subnets (Hosting ECS)
     {
       rule_number = 110
@@ -81,7 +70,19 @@ variable "publicnacl_config" {
       cidr_block  = "0.0.0.0/0"
       from_port   = 0
       to_port     = 0
+    },
+
+    # This is a debugging step. Inbound traffic from internet is necessary for traffic coming back through NAT gateway.
+    {
+      rule_number = 40
+      egress      = false
+      protocol    = "tcp"
+      action      = "allow"
+      cidr_block  = "0.0.0.0/0"
+      from_port   = 1024
+      to_port     = 65535
     }
+
 
   ]
 }
