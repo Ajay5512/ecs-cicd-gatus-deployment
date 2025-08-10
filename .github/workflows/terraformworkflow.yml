@@ -37,7 +37,7 @@ jobs:
       - name: Plan
         working-directory: ./terraform
         run: |
-          terraform plan -no-color
+          terraform plan -out -no-color plan.out
           terraform show -no-color plan.out > plan.txt
 
 
