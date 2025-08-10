@@ -39,7 +39,7 @@ variable "publicnacl_config" {
       to_port     = 0
     },
 
-# This is a debugging step. Inbound traffic from internet is necessary for traffic coming back through NAT gateway.
+    # This is a debugging step. Inbound traffic from internet is necessary for traffic coming back through NAT gateway.
     {
       rule_number = 40
       egress      = false
