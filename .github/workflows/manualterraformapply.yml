@@ -3,6 +3,10 @@ name: terraform apply (manual)
 on:
   workflow_dispatch: {}
 
+permissions:
+  contents: read
+  actions: read
+
 
 jobs:
   apply:
