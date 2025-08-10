@@ -34,8 +34,9 @@ jobs:
           branch: master
           name: tf-plan         
           path: ./terraform
+          if_no_artifact_found: fail
 
-      - name: Init
+      - name: Re-anitialize
         run: terraform init -input=false
 
       - name: Apply approved plan
