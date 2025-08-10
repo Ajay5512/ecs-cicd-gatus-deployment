@@ -20,4 +20,5 @@ resource "aws_iam_role_policy_attachment" "ecs_exec_attach" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
+
 #Necessary IAM roles for pulling images from ecr
