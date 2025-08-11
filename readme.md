@@ -14,8 +14,8 @@ This ensures:
 
 ---
 
-🎥 **Project Video:**
-<video src="./readmefiles/Infravid.mp4" controls></video>
+🎥 **Project Video:** 
+[Watch on Vimeo](https://vimeo.com/1109119672?share=copy)
 
 ---
 
