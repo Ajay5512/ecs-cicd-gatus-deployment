@@ -2,3 +2,4 @@
 **/.terraform/*
 *.tfstate   # using s3 backend anyways
 *.tfstate.* # using s3 backend anyways
+**/.terraform.lock.hcl
