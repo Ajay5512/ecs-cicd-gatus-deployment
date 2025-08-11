@@ -16,7 +16,7 @@ This ensures:
 
 ## 🏗 Architecture Diagram
 
-![Architecture Diagram](./readmefiles/finalindra.png)
+![Architecture Diagram](./readmefiles/finalinfra.png)
 
 ---
 
