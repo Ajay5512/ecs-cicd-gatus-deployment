@@ -14,6 +14,11 @@ This ensures:
 
 ---
 
+🎥 **Project Video:**
+<video src="./readmefiles/Infravid.mp4" controls></video>
+
+---
+
 ## 🏗 Architecture Diagram
 
 ![Architecture Diagram](./readmefiles/finalinfra.png)
