@@ -26,10 +26,6 @@ jobs:
       - name: Login to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Demonstration
-        run: |
-          echo "Hi guys!"
-
       - name: Build the Docker Image
         run: |
           docker build -t gatus ./GatusApp
