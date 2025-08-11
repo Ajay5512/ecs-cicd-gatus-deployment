@@ -18,7 +18,7 @@ This stack runs **[Gatus](https://github.com/TwiN/gatus)** as a lightweight upti
 
 ## 🏗 Architecture Diagram
 
-![Architecture Diagram] (./readmefiles/ecsproject.drawio\ \(5\).png)   
+![Architecture Diagram](./readmefiles/ecsproject.drawio%20(5).png)
 
 ## 📜 Overview
 
