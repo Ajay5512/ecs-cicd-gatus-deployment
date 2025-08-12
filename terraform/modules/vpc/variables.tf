@@ -72,16 +72,16 @@ variable "publicnacl_config" {
       to_port     = 0
     },
 
-    # # This is a debugging step.
-    # {
-    #   rule_number = 40
-    #   egress      = false
-    #   protocol    = "tcp"
-    #   action      = "allow"
-    #   cidr_block  = "0.0.0.0/0"
-    #   from_port   = 1024
-    #   to_port     = 65535
-    # }
+    # This is a debugging step. Allows ecr response back into private subnet. (Found out it's actually necessary)
+    {
+      rule_number = 40
+      egress      = false
+      protocol    = "tcp"
+      action      = "allow"
+      cidr_block  = "0.0.0.0/0"
+      from_port   = 1024
+      to_port     = 65535
+    }
 
 
   ]

@@ -1,3 +1,9 @@
+locals {
+  public_cidrs  = ["10.0.0.0/26", "10.0.0.64/26"]
+  private_cidrs = ["10.0.0.128/26", "10.0.0.192/26"]
+  azs           = ["eu-west-2a", "eu-west-2b"]
+}
+
 resource "aws_vpc" "network" {
   cidr_block           = "10.0.0.0/24"
   enable_dns_support   = true
@@ -5,34 +11,29 @@ resource "aws_vpc" "network" {
   tags                 = { Name = "ecs-vpc", Project = "main", Tier = "main" }
 }
 
-resource "aws_subnet" "public_1" {
+resource "aws_subnet" "public" {
+  count                   = 2
   vpc_id                  = aws_vpc.network.id
-  cidr_block              = "10.0.0.0/26"
-  availability_zone       = "eu-west-2a"
+  cidr_block              = local.public_cidrs[count.index]
+  availability_zone       = local.azs[count.index]
   map_public_ip_on_launch = true
-  tags                    = { Name = "public-1", Tier = "public" }
+  tags = {
+    Name   = "public-${count.index + 1}"
+    Tier   = "public"
+    Project = "main"
+  }
 }
 
-resource "aws_subnet" "public_2" {
-  vpc_id                  = aws_vpc.network.id
-  cidr_block              = "10.0.0.64/26"
-  availability_zone       = "eu-west-2b"
-  map_public_ip_on_launch = true
-  tags                    = { Name = "public-2", Tier = "public" }
-}
-
-resource "aws_subnet" "private_1" {
-  vpc_id            = aws_vpc.network.id
-  cidr_block        = "10.0.0.128/26"
-  availability_zone = "eu-west-2a"
-  tags              = { Name = "private-1", Tier = "private" }
-}
-
-resource "aws_subnet" "private_2" {
-  vpc_id            = aws_vpc.network.id
-  cidr_block        = "10.0.0.192/26"
-  availability_zone = "eu-west-2b"
-  tags              = { Name = "private-2", Tier = "private" }
+resource "aws_subnet" "private" {
+  count            = 2
+  vpc_id           = aws_vpc.network.id
+  cidr_block       = local.private_cidrs[count.index]
+  availability_zone = local.azs[count.index]
+  tags = {
+    Name   = "private-${count.index + 1}"
+    Tier   = "private"
+    Project = "main"
+  }
 }
 
 resource "aws_network_acl" "public" {
@@ -52,13 +53,9 @@ resource "aws_network_acl_rule" "public" {
   to_port        = each.value.to_port
 }
 
-resource "aws_network_acl_association" "public_1" {
-  subnet_id      = aws_subnet.public_1.id
-  network_acl_id = aws_network_acl.public.id
-}
-
-resource "aws_network_acl_association" "public_2" {
-  subnet_id      = aws_subnet.public_2.id
+resource "aws_network_acl_association" "public" {
+  count          = length(aws_subnet.public)
+  subnet_id      = aws_subnet.public[count.index].id
   network_acl_id = aws_network_acl.public.id
 }
 
@@ -75,11 +72,8 @@ resource "aws_route_table" "public" {
 }
 
 resource "aws_route_table_association" "public" {
-  for_each = {
-    public_1 = aws_subnet.public_1.id
-    public_2 = aws_subnet.public_2.id
-  }
-  subnet_id      = each.value
+  count          = length(aws_subnet.public)
+  subnet_id      = aws_subnet.public[count.index].id
   route_table_id = aws_route_table.public.id
 }
 
@@ -92,13 +86,11 @@ resource "aws_route_table" "private" {
 }
 
 resource "aws_route_table_association" "private" {
-  for_each = {
-    private_1 = aws_subnet.private_1.id
-    private_2 = aws_subnet.private_2.id
-  }
-  subnet_id      = each.value
+  count          = length(aws_subnet.private)
+  subnet_id      = aws_subnet.private[count.index].id
   route_table_id = aws_route_table.private.id
 }
+
 
 resource "aws_eip" "nat" {
   domain = "vpc"
@@ -108,6 +100,6 @@ resource "aws_eip" "nat" {
 
 resource "aws_nat_gateway" "natgateway" {
   allocation_id = aws_eip.nat.id
-  subnet_id     = aws_subnet.public_1.id
+  subnet_id     = aws_subnet.public[0].id
   depends_on    = [aws_internet_gateway.igw]
 }
