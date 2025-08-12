@@ -113,3 +113,8 @@ This project uses multiple GitHub Actions workflows to separate **application de
 - Add automated scaling policies for ECS services based on CPU, memory, or custom CloudWatch metrics.  
 - Integrate automated backups for Terraform state in case of S3 corruption or accidental deletion.  
 ---
+
+## Local Setup
+
+Clone the repo, install AWS CLI, Terraform, and Docker, then configure your AWS credentials. Update variables in a .tfvars file, leaving domain fields empty if you want to use the ALB DNS instead. From the terraform/ directory, run terraform init and terraform apply, then open the ALB DNS from the outputs in your browser.
+
