@@ -18,20 +18,20 @@ resource "aws_subnet" "public" {
   availability_zone       = local.azs[count.index]
   map_public_ip_on_launch = true
   tags = {
-    Name   = "public-${count.index + 1}"
-    Tier   = "public"
+    Name    = "public-${count.index + 1}"
+    Tier    = "public"
     Project = "main"
   }
 }
 
 resource "aws_subnet" "private" {
-  count            = 2
-  vpc_id           = aws_vpc.network.id
-  cidr_block       = local.private_cidrs[count.index]
+  count             = 2
+  vpc_id            = aws_vpc.network.id
+  cidr_block        = local.private_cidrs[count.index]
   availability_zone = local.azs[count.index]
   tags = {
-    Name   = "private-${count.index + 1}"
-    Tier   = "private"
+    Name    = "private-${count.index + 1}"
+    Tier    = "private"
     Project = "main"
   }
 }
