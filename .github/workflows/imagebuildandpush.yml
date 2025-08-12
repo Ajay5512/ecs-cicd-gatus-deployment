@@ -8,6 +8,10 @@ on:
       - 'GatusApp/**'
       - '.github/workflows/**'
 
+permissions:
+  contents: read
+  security-events: write
+
 jobs: 
   build-and-push-ECR:
     runs-on: ubuntu-latest

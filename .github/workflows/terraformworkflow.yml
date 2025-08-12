@@ -8,6 +8,10 @@ on:
       - terraform/**
       - '.github/workflows/**'
 
+permissions:
+  contents: read
+  security-events: write
+
 jobs:
   applying-terraform-changes:
     runs-on: ubuntu-latest
