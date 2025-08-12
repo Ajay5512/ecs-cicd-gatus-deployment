@@ -26,6 +26,43 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
+
+# Also using trivy to scan terraform
+
+      - name: Cache Trivy DB
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/trivy
+          key: ${{ runner.os }}-trivy-iac-${{ hashFiles('terraform/**/*.tf') }}
+          restore-keys: |
+            ${{ runner.os }}-trivy-iac-
+
+      - name: Trivy IaC scan (Terraform) - fail on HIGH/CRITICAL
+        uses: aquasecurity/trivy-action@0.24.0
+        with:
+          scan-type: config                
+          scan-ref: ./terraform            
+          format: table
+          exit-code: '1'                   
+          severity: 'CRITICAL,HIGH'
+          ignore-unfixed: true           
+
+      - name: Trivy IaC SARIF report
+        if: always()
+        uses: aquasecurity/trivy-action@0.24.0
+        with:
+          scan-type: config
+          scan-ref: ./terraform
+          format: sarif
+          output: trivy-iac.sarif
+          severity: 'CRITICAL,HIGH'
+          ignore-unfixed: true
+
+      - name: Upload SARIF to Security tab
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: trivy-iac.sarif
       
       - name: Initialize the terraform state file
         working-directory: ./terraform
@@ -40,7 +77,7 @@ jobs:
           terraform plan -no-color -out plan.out
           terraform show -no-color plan.out > plan.txt
 
-      - name: UPLOAD THE PLAN BRUH
+      - name: Uploading Plan
         uses: actions/upload-artifact@v4
         with:
           name: tf-plan
