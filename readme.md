@@ -68,38 +68,58 @@ This stack runs **[Gatus](https://github.com/TwiN/gatus)** as a lightweight upti
 
 ---
 
-## ⚙️ CI/CD Workflow (GitHub Actions) 
+## ⚙️ CI/CD Workflow (GitHub Actions)
 
-This project uses multiple GitHub Actions workflows to separate **application deployment** from **infrastructure provisioning**, ensuring controlled, reviewable changes.
+This project uses multiple GitHub Actions workflows to separate **application deployment** from **infrastructure provisioning**, ensuring controlled, reviewable changes and automated security scanning.
 
 - **Source control:** GitHub  
 - **Remote backend:** S3 + DynamoDB for team-ready state management (even as a solo project)  
 
 ### Workflow Triggers & Steps
 
-1. **Docker Build & Push Workflow**  
-   - **Trigger:** `git push` where the `Dockerfile` or relevant GitHub Actions workflow files have changed.  
-   - **Steps:**  
-     1. Build a new Docker image.  
-     2. **Test the image** by running the container locally in the workflow and using `curl` to check that it responds correctly.  
-     3. If the test passes, push the image to the ECR repository.  
+---
 
-2. **Terraform Plan Workflow**  
-   - **Trigger:** `git push` where the `terraform/` directory or relevant GitHub Actions workflow files have changed.  
-   - **Steps:**  
-     1. Run `terraform fmt -check` to ensure all Terraform files follow the correct formatting conventions.  
-     2. Initialize Terraform with the remote backend.  
-     3. Run `terraform plan` to produce an execution plan.  
-     4. Output the plan for the developer to review — **no changes are applied** at this stage.  
+#### 1. **Docker Build, Scan & Push Workflow**  
+**Trigger:** `git push` where the `GatusApp/` directory or relevant GitHub Actions workflow files have changed.  
 
-3. **Terraform Apply Workflow** (Manual Approval)  
-   - **Trigger:** Manually executed by the developer from the GitHub Actions UI after reviewing the most recent plan.  
-   - **Steps:**  
-     1. Use the **saved plan** from the Terraform Plan workflow.  
-     2. Run `terraform apply` to provision or update infrastructure.  
-   - **Reason for manual step:**  
-     - Provides a **final review checkpoint** before changes go live.  
-     - Minimizes risk of unintended infrastructure changes.  
+**Steps:**  
+1. **Build** a new Docker image from the `GatusApp` Dockerfile.  
+2. **Test the image** by running it locally in the workflow and using `curl` to verify that it responds correctly.  
+3. **Scan the image for vulnerabilities** using **[Trivy](https://github.com/aquasecurity/trivy)**:  
+   - Scan OS packages and application dependencies inside the image.  
+   - Fail the job on **HIGH** or **CRITICAL** vulnerabilities (configurable).  
+   - Generate a **SARIF security report** and upload it to the GitHub **Security tab** for visibility and long-term tracking.  
+4. If the test and scan pass, **push the image to the ECR repository**.
+
+---
+
+#### 2. **Terraform Plan & IaC Security Scan Workflow**  
+**Trigger:** `git push` where the `terraform/` directory or relevant GitHub Actions workflow files have changed.  
+
+**Steps:**  
+1. Run `terraform fmt -check` to ensure all Terraform files are properly formatted.  
+2. Initialize Terraform with the remote backend configuration.  
+3. **Scan the Terraform code** using **Trivy’s IaC scanning** mode:  
+   - Detect insecure configurations (e.g., overly permissive security groups, public S3 buckets).  
+   - Fail the workflow on **HIGH** or **CRITICAL** misconfigurations (configurable).  
+   - Generate a **SARIF report** for GitHub’s **Security tab**.  
+4. Run `terraform validate` to confirm the configuration is syntactically and structurally valid.  
+5. Generate a `terraform plan` execution plan (no changes applied at this stage).  
+6. Save the plan as a workflow artifact for review.  
+7. Display the first 400 lines of the plan in the GitHub Actions summary for quick inspection.
+
+---
+
+#### 3. **Terraform Apply Workflow** (Manual Approval)  
+**Trigger:** Manually executed from the GitHub Actions UI after reviewing the most recent plan and security scan results.  
+
+**Steps:**  
+1. Download and use the saved plan artifact from the Terraform Plan workflow.  
+2. Run `terraform apply` to provision or update infrastructure.  
+
+**Why manual?**  
+- Provides a **final checkpoint** before changes go live.  
+- Ensures both functional and **security scan results** are reviewed before applying.
 
 ---
 
