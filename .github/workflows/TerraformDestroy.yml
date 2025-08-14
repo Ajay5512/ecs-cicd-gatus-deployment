@@ -32,4 +32,5 @@ jobs:
       
       - name: Destroy infra 
         run: |
+          terraform init
           terraform destroy
