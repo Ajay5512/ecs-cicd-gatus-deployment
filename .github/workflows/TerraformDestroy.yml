@@ -1,4 +1,4 @@
-name: terraform apply (manual)
+name: terraform destroy (manual)
 
 on:
   workflow_dispatch: {}
