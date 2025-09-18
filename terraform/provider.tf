@@ -1,10 +1,9 @@
 terraform {
   backend "s3" {
-    bucket         = "zakaria-projects"
+    bucket         = "gatus-tf-backend "
     key            = "ecs/terraformstate.tfstate"
-    region         = "eu-west-2"
-    encrypt        = true
-    dynamodb_table = "ecsstatefile-lock"
+    region         = "us-east-1"
+    use_lockfile = true
   }
   required_providers {
     aws = {
