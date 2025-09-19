@@ -7,10 +7,18 @@ module "security_groups" {
   vpc_id = module.vpc.vpc_id
 }
 
-module "acm" {
-  source = "./modules/acm"
+# Create DNS zone first
+module "dns" {
+  source       = "./modules/route53"
+  alb_dns_name = module.alb.alb_dns_name
+  alb_zone_id  = module.alb.alb_zone_id
 }
 
+# Pass zone_id to ACM module
+module "acm" {
+  source  = "./modules/acm"
+  zone_id = module.dns.zone_id
+}
 
 module "alb" {
   source            = "./modules/alb"
@@ -25,17 +33,10 @@ module "iam" {
   source = "./modules/iam"
 }
 
-
 module "ecs" {
   source             = "./modules/ecs"
   private_subnet_ids = module.vpc.private_subnet_ids
   ecs_sg_id          = module.security_groups.ecs_sg_id
   target_group_arn   = module.alb.target_group_arn
   execution_role_arn = module.iam.execution_role_arn
-}
-
-module "dns" {
-  source       = "./modules/route53"
-  alb_dns_name = module.alb.alb_dns_name
-  alb_zone_id  = module.alb.alb_zone_id
 }
