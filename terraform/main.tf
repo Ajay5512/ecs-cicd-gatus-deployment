@@ -1,3 +1,5 @@
+# main.tf - Fixed order to avoid circular dependencies
+
 module "vpc" {
   source = "./modules/vpc"
 }
@@ -7,19 +9,18 @@ module "security_groups" {
   vpc_id = module.vpc.vpc_id
 }
 
-# Create DNS zone first
-module "dns" {
-  source       = "./modules/route53"
-  alb_dns_name = module.alb.alb_dns_name
-  alb_zone_id  = module.alb.alb_zone_id
+# 1. Create DNS zone FIRST (no dependencies)
+module "dns_zone" {
+  source = "./modules/dns_zone"
 }
 
-# Pass zone_id to ACM module
+# 2. Create ACM certificate with validation (depends only on DNS zone)
 module "acm" {
   source  = "./modules/acm"
-  zone_id = module.dns.zone_id
+  zone_id = module.dns_zone.zone_id
 }
 
+# 3. Create ALB (depends on certificate)
 module "alb" {
   source            = "./modules/alb"
   vpc_id            = module.vpc.vpc_id
@@ -27,6 +28,14 @@ module "alb" {
   alb_sg_id         = module.security_groups.alb_sg_id
   certificate_arn   = module.acm.certificate_arn
   health_check_path = "/"
+}
+
+# 4. Create DNS alias record (depends on ALB)
+module "dns_records" {
+  source       = "./modules/dns_records"
+  zone_id      = module.dns_zone.zone_id
+  alb_dns_name = module.alb.alb_dns_name
+  alb_zone_id  = module.alb.alb_zone_id
 }
 
 module "iam" {

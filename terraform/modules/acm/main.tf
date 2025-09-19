@@ -1,3 +1,6 @@
+# modules/acm/main.tf
+# Simplified ACM with better error handling
+
 resource "aws_acm_certificate" "acm" {
   domain_name       = "chimwaza.click"
   validation_method = "DNS"
@@ -7,6 +10,7 @@ resource "aws_acm_certificate" "acm" {
   }
 }
 
+# Create validation records with better error handling
 resource "aws_route53_record" "acm_cert_validation" {
   for_each = {
     for dvo in aws_acm_certificate.acm.domain_validation_options :
@@ -17,14 +21,37 @@ resource "aws_route53_record" "acm_cert_validation" {
     }
   }
 
-  zone_id = var.zone_id # This will come from the route53 module
-  name    = each.value.name
-  type    = each.value.type
-  ttl     = 60
-  records = [each.value.record]
+  allow_overwrite = true # Important: allows overwriting existing records
+  zone_id         = var.zone_id
+  name            = each.value.name
+  type            = each.value.type
+  ttl             = 60
+  records         = [each.value.record]
+
+  # Add explicit dependency
+  depends_on = [aws_acm_certificate.acm]
 }
 
+# Certificate validation with timeout
 resource "aws_acm_certificate_validation" "acm_cert" {
-  certificate_arn         = aws_acm_certificate.acm.arn
-  validation_record_fqdns = [for r in aws_route53_record.acm_cert_validation : r.fqdn]
+  certificate_arn = aws_acm_certificate.acm.arn
+  validation_record_fqdns = [
+    for record in aws_route53_record.acm_cert_validation : record.fqdn
+  ]
+
+  # Add timeout to prevent infinite waiting
+  timeouts {
+    create = "10m"
+  }
+
+  depends_on = [aws_route53_record.acm_cert_validation]
+}
+
+output "certificate_arn" {
+  value = aws_acm_certificate_validation.acm_cert.certificate_arn
+}
+
+variable "zone_id" {
+  type        = string
+  description = "Route53 hosted zone ID"
 }
