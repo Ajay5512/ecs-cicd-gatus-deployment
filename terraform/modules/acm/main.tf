@@ -1,5 +1,5 @@
 resource "aws_acm_certificate" "acm" {
-  domain_name       = "zakariagatus.click"
+  domain_name       = "chimwaza.click"
   validation_method = "DNS"
 
   lifecycle {
