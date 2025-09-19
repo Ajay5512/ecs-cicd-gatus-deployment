@@ -1,8 +1,8 @@
 terraform {
   backend "s3" {
-    bucket         = "gatus-tf-backend"
-    key            = "ecs/terraformstate.tfstate"
-    region         = "us-east-1"
+    bucket       = "gatus-tf-backend"
+    key          = "ecs/terraformstate.tfstate"
+    region       = "us-east-1"
     use_lockfile = true
   }
   required_providers {
