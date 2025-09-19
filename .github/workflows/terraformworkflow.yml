@@ -11,10 +11,12 @@ on:
 permissions:
   contents: read
   security-events: write
+  id-token: write
 
 jobs:
   applying-terraform-changes:
     runs-on: ubuntu-latest
+    environment: production
 
     steps:
 
@@ -24,12 +26,11 @@ jobs:
       - name: Installing terraform
         uses: hashicorp/setup-terraform@v2
 
-      - name: Configure AWS creds
-        uses: aws-actions/configure-aws-credentials@v3
-        with: 
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.ROLE_TO_ASSUME }}
+          aws-region: us-east-1
 
 # Also using trivy to scan terraform
 
