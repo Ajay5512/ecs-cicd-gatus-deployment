@@ -1,7 +1,7 @@
 resource "aws_acm_certificate" "acm" {
   domain_name       = "chimwaza.click"
   validation_method = "DNS"
-  
+
   lifecycle {
     create_before_destroy = true
   }
@@ -16,8 +16,8 @@ resource "aws_route53_record" "acm_cert_validation" {
       type   = dvo.resource_record_type
     }
   }
-  
-  zone_id = var.zone_id  # This will come from the route53 module
+
+  zone_id = var.zone_id # This will come from the route53 module
   name    = each.value.name
   type    = each.value.type
   ttl     = 60
