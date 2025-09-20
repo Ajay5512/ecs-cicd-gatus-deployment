@@ -1,6 +1,7 @@
 name: Build, Test and Push Gatus Image
 
 on:
+  workflow_dispatch: {}
   push:
     branches:
       - master
