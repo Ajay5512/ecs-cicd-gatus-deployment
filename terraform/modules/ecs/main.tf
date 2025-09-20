@@ -67,7 +67,7 @@ resource "aws_ecs_service" "gatus" {
   }
 
   depends_on = [aws_ecs_task_definition.gatus]
-  
+
   lifecycle {
     create_before_destroy = false
   }

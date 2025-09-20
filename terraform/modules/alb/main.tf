@@ -6,7 +6,7 @@ resource "aws_lb" "gatus_alb" {
   security_groups            = [var.alb_sg_id]
   enable_deletion_protection = false
   idle_timeout               = 60
-  
+
   tags = {
     Name = "gatus-alb"
   }
@@ -28,11 +28,11 @@ resource "aws_lb_target_group" "target_app" {
     interval            = 30
     timeout             = 5
   }
-  
+
   lifecycle {
     create_before_destroy = true
   }
-  
+
   tags = {
     Name = "gatus-target-group"
   }
