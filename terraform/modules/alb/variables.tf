@@ -14,9 +14,7 @@ variable "certificate_arn" {
   type = string
 }
 
-
 variable "health_check_path" {
   type    = string
   default = "/"
 }
-

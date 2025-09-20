@@ -1,9 +1,7 @@
-
 variable "ecr_image" {
   type    = string
   default = "112136120738.dkr.ecr.eu-west-2.amazonaws.com/gatus:latest"
 }
-
 
 variable "private_subnet_ids" {
   type = list(string)
@@ -20,4 +18,3 @@ variable "target_group_arn" {
 variable "execution_role_arn" {
   type = string
 }
-

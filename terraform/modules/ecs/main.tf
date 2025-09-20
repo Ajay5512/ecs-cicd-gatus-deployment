@@ -13,8 +13,8 @@ resource "aws_ecs_task_definition" "gatus" {
   family                   = "gatus"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
-  cpu                      = "256" # 0.25 vCPU
-  memory                   = "512" # 0.5 GB
+  cpu                      = "256"
+  memory                   = "512"
   execution_role_arn       = var.execution_role_arn
 
   container_definitions = jsonencode([
@@ -37,7 +37,6 @@ resource "aws_ecs_task_definition" "gatus" {
     }
   ])
 }
-
 
 resource "aws_ecs_service" "gatus" {
   name             = "gatus-svc"
@@ -67,4 +66,9 @@ resource "aws_ecs_service" "gatus" {
     rollback = true
   }
 
+  depends_on = [aws_ecs_task_definition.gatus]
+  
+  lifecycle {
+    create_before_destroy = false
+  }
 }
