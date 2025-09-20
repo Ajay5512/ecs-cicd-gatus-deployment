@@ -9,7 +9,7 @@ variable "public_subnet_ids" {
 variable "alb_sg_id" {
   type = string
 }
-#
+##
 variable "health_check_path" {
   type    = string
   default = "/"
